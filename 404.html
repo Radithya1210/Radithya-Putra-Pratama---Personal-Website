@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Halaman Tidak Ditemukan</title>
+    <link rel="icon" type="image/png" href="./asset/img/logo.png" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-primary: #030712;
+        --bg-secondary: #0b1528;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --accent-color: #3b82f6;
+        --accent-glow: rgba(59, 130, 246, 0.3);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden;
+      }
+
+      .container {
+        text-align: center;
+        padding: 2rem;
+        z-index: 1;
+      }
+
+      h1 {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 8rem;
+        font-weight: 800;
+        background: linear-gradient(
+          to bottom,
+          var(--text-primary),
+          var(--text-secondary)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      p {
+        color: var(--text-secondary);
+        font-size: 1.25rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .btn-back {
+        background: transparent;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn-back:hover {
+        background: var(--accent-color);
+        color: #fff;
+        box-shadow: 0 0 20px var(--accent-glow);
+      }
+
+      footer {
+        position: absolute;
+        bottom: 2rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>404</h1>
+      <p>Ups, halaman yang Anda cari tidak ditemukan.</p>
+      <a href="./index.html" class="btn-back">Kembali ke Beranda</a>
+    </div>
+
+    <footer>
+      &copy; <span id="year"></span> Radithya Putra Pratama. All rights
+      reserved.
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
