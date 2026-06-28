@@ -21,7 +21,7 @@
     />
     <link rel="stylesheet" href="style.css" />
 
-    <!-- Gaya Khusus untuk Sistem Halaman (Pagination) -->
+    <!-- Gaya Khusus untuk Sistem Halaman & Efek Render Berurut -->
     <style>
       .pagination-container {
         display: flex;
@@ -110,9 +110,59 @@
         transition: color 0.3s ease;
       }
 
-      /* Transisi efek kelembutan saat perpindahan halaman */
-      #photo-grid {
-        transition: opacity 0.2s ease;
+      /* Efek Transisi Kelembutan Render Foto */
+      .gallery-card {
+        position: relative;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.03); /* Latar belakang placeholder */
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      /* Gambar disembunyikan sampai selesai dimuat dalam batch */
+      .gallery-card img {
+        opacity: 0;
+        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .gallery-card img.loaded {
+        opacity: 1;
+      }
+
+      /* Animasi Pulse Skeleton saat menunggu antrean render */
+      @keyframes skeletonPulse {
+        0% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 0.25;
+        }
+        100% {
+          opacity: 0.5;
+        }
+      }
+
+      .gallery-card.loading-skeleton::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.05),
+          transparent
+        );
+        animation: skeletonPulse 1.5s ease infinite;
+        z-index: 1;
+      }
+
+      /* Hilangkan efek loading saat gambar siap tampil */
+      .gallery-card:not(.loading-skeleton)::before {
+        display: none;
       }
 
       /* Adaptasi Warna untuk Light Mode */
@@ -137,6 +187,10 @@
 
       html[data-theme="light"] .pagination-status-text {
         color: rgba(0, 0, 0, 0.6);
+      }
+
+      html[data-theme="light"] .gallery-card {
+        background: rgba(0, 0, 0, 0.05);
       }
     </style>
   </head>
@@ -970,11 +1024,31 @@
       let totalPages = 1;
       let itemsPerPage = 37; // Default items per halaman
 
+      // Array penampung objek Image yang aktif mengunduh untuk pembatalan instan saat ganti halaman
+      let activeImageLoaders = [];
+      let activeLoadSessionId = 0;
+
+      // Helper CDN Image Compressor Proxy (weserv.nl)
+      // Ini akan memperkecil lebar gambar menjadi 400px dan mengompres kualitasnya hingga 60%
+      function getCompressedUrl(originalSrc) {
+        return `https://images.weserv.nl/?url=${encodeURIComponent(originalSrc)}&w=400&q=60`;
+      }
+
+      // Fungsi untuk menghentikan & membatalkan semua koneksi HTTP gambar yang sedang berjalan
+      function cancelPendingDownloads() {
+        activeImageLoaders.forEach((img) => {
+          img.onload = null;
+          img.onerror = null;
+          img.src = ""; // Mengubah src menjadi kosong memaksa browser menghentikan unduhan berjalan
+        });
+        activeImageLoaders = [];
+      }
+
       // Fungsi menginisialisasi pembagian foto pintar per halaman
       function initPhotoPagination() {
         const total = photos.length;
         if (total > 20) {
-          // Pembagian pintar: jika di atas 60, bagi menjadi 3 halaman rata (misal: 111 / 3 = 37 foto per halaman)
+          // Pembagian pintar: jika di atas 60, bagi menjadi 3 halaman rata (111 / 3 = 37 foto per halaman)
           if (total > 60) {
             itemsPerPage = Math.ceil(total / 3);
           } else {
@@ -990,8 +1064,14 @@
         }
       }
 
-      // Render Photo Cards berdasarkan Halaman yang Aktif secara Instan
-      function renderPhotos() {
+      // Render Photo Cards berdasarkan Halaman dengan aturan muat berurutan kelompok 10 foto yang dioptimalkan
+      async function renderPhotos() {
+        // Hentikan dan batalkan pengunduhan halaman sebelumnya agar tidak menyumbat jaringan
+        cancelPendingDownloads();
+
+        activeLoadSessionId++;
+        const currentSession = activeLoadSessionId;
+
         const grid = document.getElementById("photo-grid");
         grid.innerHTML = "";
 
@@ -999,12 +1079,12 @@
         const endIndex = Math.min(startIndex + itemsPerPage, photos.length);
         const visiblePhotos = photos.slice(startIndex, endIndex);
 
+        // Langkah 1: Render kerangka/skeleton instan agar tata letak tidak melompat
         visiblePhotos.forEach((photo, index) => {
-          // Cari index global untuk mengaitkan lightbox viewer dengan benar
           const globalIndex = startIndex + index;
           const card = `
-            <div class="gallery-card" onclick="openViewer(${globalIndex}, 'photo')">
-              <img src="${photo.src}" alt="${photo.title}" loading="lazy" />
+            <div class="gallery-card loading-skeleton" id="card-${globalIndex}" onclick="openViewer(${globalIndex}, 'photo')">
+              <img alt="${photo.title}" />
               <div class="card-overlay">
                 <span class="card-tag">Foto</span>
                 <h3 class="card-title">${photo.title}</h3>
@@ -1027,6 +1107,72 @@
           paginationWrapper.style.display = "none";
           paginationStatus.style.display = "none";
         }
+
+        // Langkah 2: Proses pemuatan gambar sekuensial (Batching berurutan per 10 foto) menggunakan versi Terkompresi
+        const batchSize = 10;
+        for (let i = 0; i < visiblePhotos.length; i += batchSize) {
+          // Jika pengguna telah berpindah halaman, hentikan pemrosesan batch lama seketika
+          if (currentSession !== activeLoadSessionId) return;
+
+          const batch = visiblePhotos.slice(i, i + batchSize);
+
+          // Muat 10 foto saat ini secara paralel (satu batch)
+          const batchPromises = batch.map((photo, batchIndex) => {
+            const globalIndex = startIndex + i + batchIndex;
+            return new Promise((resolve) => {
+              const cardElement = document.getElementById(
+                `card-${globalIndex}`,
+              );
+              const imgElement = cardElement
+                ? cardElement.querySelector("img")
+                : null;
+
+              if (!imgElement) {
+                resolve();
+                return;
+              }
+
+              const tempImg = new Image();
+              activeImageLoaders.push(tempImg);
+
+              // Ambil URL kompresi proxy untuk cover galeri
+              const compressedSrc = getCompressedUrl(photo.src);
+
+              tempImg.onload = () => {
+                if (currentSession === activeLoadSessionId) {
+                  imgElement.src = compressedSrc;
+                  imgElement.classList.add("loaded");
+                  cardElement.classList.remove("loading-skeleton");
+                }
+                activeImageLoaders = activeImageLoaders.filter(
+                  (item) => item !== tempImg,
+                );
+                resolve();
+              };
+
+              tempImg.onerror = () => {
+                if (currentSession === activeLoadSessionId) {
+                  // Jika proxy gagal memuat, gunakan fallback src asli langsung
+                  imgElement.src = photo.src;
+                  imgElement.classList.add("loaded");
+                  cardElement.classList.remove("loading-skeleton");
+                }
+                activeImageLoaders = activeImageLoaders.filter(
+                  (item) => item !== tempImg,
+                );
+                resolve();
+              };
+
+              tempImg.src = compressedSrc;
+            });
+          });
+
+          // Tunggu hingga batch selesai, tetapi batasi waktu maksimal 3,5 detik agar jika ada gambar lambat, batch selanjutnya tidak diblokir selamanya
+          await Promise.race([
+            Promise.all(batchPromises),
+            new Promise((resolve) => setTimeout(resolve, 3500)),
+          ]);
+        }
       }
 
       // Render tombol nomor halaman secara dinamis
@@ -1048,7 +1194,7 @@
         }
       }
 
-      // Fungsi berpindah halaman secara Langsung/Instan (Tanpa Preloading)
+      // Fungsi berpindah halaman secara Langsung/Instan (Memicu render urut bebas lag)
       function goToPage(pageNumber) {
         if (
           pageNumber < 1 ||
@@ -1148,9 +1294,9 @@
         const currentItem = items[activeIndex];
 
         titleEl.textContent = currentItem.title;
-        descEl.textContent = currentItem.desc || "";
+        descEl.textContent = currentItem.desc || "Galeri Dokumentasi";
 
-        // Custom download click handler
+        // Custom download click handler (TETAP MENGGUNAKAN GAMBAR HD/ASLI TANPA KOMPRESI)
         downloadBtn.onclick = () => {
           const link = document.createElement("a");
           link.href = currentItem.src;
@@ -1161,6 +1307,7 @@
         };
 
         if (currentSection === "photo") {
+          // RENDER DENGAN GAMBAR ASLI KUALITAS TINGGI (TANPA KOMPRESI DI LIGHTBOX)
           mediaBox.innerHTML = `<img src="${currentItem.src}" alt="${currentItem.title}">`;
         } else {
           // Render pemutar video kustom premium
@@ -1337,58 +1484,6 @@
         // Ambil ulang referensi agar tidak rusak
         vPlayIcon = document.getElementById("video-play-icon");
         vGiantPlayIcon = document.getElementById("giant-play-icon");
-      }
-
-      function seekVideo(event) {
-        const timeline = document.getElementById("video-timeline");
-        const rect = timeline.getBoundingClientRect();
-        const clickPositionX = event.clientX - rect.left;
-        const totalWidth = rect.width;
-
-        let targetPercentage = clickPositionX / totalWidth;
-        if (targetPercentage < 0) targetPercentage = 0;
-        if (targetPercentage > 1) targetPercentage = 1;
-
-        if (vElement) {
-          vElement.currentTime = targetPercentage * vElement.duration;
-        }
-      }
-
-      function adjustVideoVolume(event) {
-        const slider = event.currentTarget;
-        const rect = slider.getBoundingClientRect();
-        const clickPositionX = event.clientX - rect.left;
-        const totalWidth = rect.width;
-
-        let targetVolume = clickPositionX / totalWidth;
-        if (targetVolume < 0) targetVolume = 0;
-        if (targetVolume > 1) targetVolume = 1;
-
-        if (vElement) {
-          vElement.volume = targetVolume;
-          vVolumeFill.style.width = `${targetVolume * 100}%`;
-          vElement.muted = false;
-        }
-      }
-
-      function toggleMute() {
-        if (!vElement) return;
-        if (vElement.muted) {
-          vElement.muted = false;
-          vVolumeFill.style.width = `${vElement.volume * 100}%`;
-        } else {
-          vElement.muted = true;
-          vVolumeFill.style.width = "0%";
-        }
-      }
-
-      function toggleFullscreen() {
-        const wrapper = document.getElementById("custom-video-wrapper");
-        if (!document.fullscreenElement) {
-          wrapper.requestFullscreen().catch((err) => console.log(err));
-        } else {
-          document.exitFullscreen();
-        }
       }
 
       // --- MOUSE FOLLOW EFFECT ---
