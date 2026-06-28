@@ -20,6 +20,125 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Gaya Khusus untuk Sistem Halaman (Pagination) -->
+    <style>
+      .pagination-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 3rem 0 1rem 0;
+        gap: 0.75rem;
+        width: 100%;
+      }
+
+      .btn-pagination {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-color, #ffffff);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-pagination:hover:not(:disabled) {
+        background: var(--text-color, #ffffff);
+        color: var(--bg-color, #0a0a0a);
+        transform: scale(1.08);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+      }
+
+      .btn-pagination:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .pagination-numbers {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .page-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--text-color, #ffffff);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .page-num:hover:not(.active):not(:disabled) {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .page-num.active {
+        background: var(--text-color, #ffffff);
+        color: var(--bg-color, #0a0a0a);
+        border-color: var(--text-color, #ffffff);
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+      }
+
+      .page-num:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .pagination-status-text {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 0.5px;
+        text-align: center;
+        margin-bottom: 3rem;
+        transition: color 0.3s ease;
+      }
+
+      /* Transisi efek kelembutan saat perpindahan halaman */
+      #photo-grid {
+        transition: opacity 0.2s ease;
+      }
+
+      /* Adaptasi Warna untuk Light Mode */
+      html[data-theme="light"] .btn-pagination,
+      html[data-theme="light"] .page-num {
+        background: rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: #1a1a1a;
+      }
+
+      html[data-theme="light"] .btn-pagination:hover:not(:disabled),
+      html[data-theme="light"] .page-num.active {
+        background: #1a1a1a;
+        color: #ffffff;
+        border-color: #1a1a1a;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      html[data-theme="light"] .page-num:hover:not(.active):not(:disabled) {
+        background: rgba(0, 0, 0, 0.08);
+      }
+
+      html[data-theme="light"] .pagination-status-text {
+        color: rgba(0, 0, 0, 0.6);
+      }
+    </style>
   </head>
   <body>
     <!-- Mouse Glow Effect -->
@@ -131,6 +250,58 @@
         <div class="gallery-grid" id="photo-grid">
           <!-- Dinamis di-render oleh JS -->
         </div>
+
+        <!-- Wadah Kontrol Halaman (Pagination) -->
+        <div
+          id="pagination-wrapper"
+          class="pagination-container"
+          style="display: none"
+        >
+          <button
+            class="btn-pagination"
+            id="prev-page-btn"
+            onclick="changePage(-1)"
+            title="Halaman Sebelumnya"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="pagination-numbers" id="pagination-numbers">
+            <!-- Render nomor halaman dinamis -->
+          </div>
+
+          <button
+            class="btn-pagination"
+            id="next-page-btn"
+            onclick="changePage(1)"
+            title="Halaman Berikutnya"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div id="pagination-status" class="pagination-status-text"></div>
       </div>
 
       <!-- Video Section -->
@@ -229,8 +400,10 @@
 
     <!-- JS Logic -->
     <script>
-      // 11 Data Foto
-      // Data Foto (Menggunakan URL Github Pages)
+      // Definisikan array video kosong untuk mencegah error pembacaan fungsi renderVideos
+      const videos = [];
+
+      // 111 Data Foto (Menggunakan URL Github Pages)
       const photos = [
         {
           id: 1,
@@ -792,13 +965,45 @@
       let currentSection = "photo"; // 'photo' atau 'video'
       let activeIndex = 0; // Index media yang sedang aktif di viewer
 
-      // Render Photo Cards
+      // STATE UNTUK HALAMAN FOTO (PAGINATION PINTAR)
+      let currentPage = 1;
+      let totalPages = 1;
+      let itemsPerPage = 37; // Default items per halaman
+
+      // Fungsi menginisialisasi pembagian foto pintar per halaman
+      function initPhotoPagination() {
+        const total = photos.length;
+        if (total > 20) {
+          // Pembagian pintar: jika di atas 60, bagi menjadi 3 halaman rata (misal: 111 / 3 = 37 foto per halaman)
+          if (total > 60) {
+            itemsPerPage = Math.ceil(total / 3);
+          } else {
+            // Jika antara 21 s.d 60, gunakan porsi halaman standar 20 foto
+            itemsPerPage = 20;
+          }
+          totalPages = Math.ceil(total / itemsPerPage);
+          currentPage = 1;
+        } else {
+          itemsPerPage = total;
+          totalPages = 1;
+          currentPage = 1;
+        }
+      }
+
+      // Render Photo Cards berdasarkan Halaman yang Aktif secara Instan
       function renderPhotos() {
         const grid = document.getElementById("photo-grid");
         grid.innerHTML = "";
-        photos.forEach((photo, index) => {
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, photos.length);
+        const visiblePhotos = photos.slice(startIndex, endIndex);
+
+        visiblePhotos.forEach((photo, index) => {
+          // Cari index global untuk mengaitkan lightbox viewer dengan benar
+          const globalIndex = startIndex + index;
           const card = `
-            <div class="gallery-card" onclick="openViewer(${index}, 'photo')">
+            <div class="gallery-card" onclick="openViewer(${globalIndex}, 'photo')">
               <img src="${photo.src}" alt="${photo.title}" loading="lazy" />
               <div class="card-overlay">
                 <span class="card-tag">Foto</span>
@@ -808,12 +1013,69 @@
           `;
           grid.insertAdjacentHTML("beforeend", card);
         });
+
+        // Perbarui Kontrol Navigasi Halaman
+        const paginationWrapper = document.getElementById("pagination-wrapper");
+        const paginationStatus = document.getElementById("pagination-status");
+
+        if (totalPages > 1) {
+          paginationWrapper.style.display = "flex";
+          paginationStatus.style.display = "block";
+          paginationStatus.textContent = `Menampilkan ${startIndex + 1} - ${endIndex} dari ${photos.length} foto (Halaman ${currentPage} dari ${totalPages})`;
+          renderPaginationControls();
+        } else {
+          paginationWrapper.style.display = "none";
+          paginationStatus.style.display = "none";
+        }
+      }
+
+      // Render tombol nomor halaman secara dinamis
+      function renderPaginationControls() {
+        const prevBtn = document.getElementById("prev-page-btn");
+        const nextBtn = document.getElementById("next-page-btn");
+        const numContainer = document.getElementById("pagination-numbers");
+
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+
+        numContainer.innerHTML = "";
+        for (let i = 1; i <= totalPages; i++) {
+          const numBtn = document.createElement("button");
+          numBtn.className = `page-num ${i === currentPage ? "active" : ""}`;
+          numBtn.textContent = i;
+          numBtn.onclick = () => goToPage(i);
+          numContainer.appendChild(numBtn);
+        }
+      }
+
+      // Fungsi berpindah halaman secara Langsung/Instan (Tanpa Preloading)
+      function goToPage(pageNumber) {
+        if (
+          pageNumber < 1 ||
+          pageNumber > totalPages ||
+          pageNumber === currentPage
+        )
+          return;
+
+        currentPage = pageNumber;
+        renderPhotos();
+      }
+
+      // Navigasi via tombol Panah Kiri / Kanan
+      function changePage(direction) {
+        goToPage(currentPage + direction);
       }
 
       // Render Video Cards dengan pemanfaatan Tag Video (#t=1) sebagai generator thumbnail otomatis
       function renderVideos() {
         const grid = document.getElementById("video-grid");
         grid.innerHTML = "";
+
+        if (videos.length === 0) {
+          grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; opacity: 0.5; padding: 2rem;">Belum ada video saat ini.</p>`;
+          return;
+        }
+
         videos.forEach((video, index) => {
           const card = `
             <div class="gallery-card" onclick="openViewer(${index}, 'video')">
@@ -886,11 +1148,10 @@
         const currentItem = items[activeIndex];
 
         titleEl.textContent = currentItem.title;
-        descEl.textContent = currentItem.desc;
+        descEl.textContent = currentItem.desc || "";
 
         // Custom download click handler
         downloadBtn.onclick = () => {
-          // Melakukan download tiruan
           const link = document.createElement("a");
           link.href = currentItem.src;
           link.download = currentItem.title;
@@ -1186,6 +1447,9 @@
       document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("footer-year").textContent =
           new Date().getFullYear();
+
+        // Jalankan inisialisasi pembagian foto pintar sebelum me-render foto
+        initPhotoPagination();
         renderPhotos();
         renderVideos();
       });
