@@ -800,6 +800,177 @@ h3 {
   }
 }
 
+/* Pagination */
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3rem 0 1rem 0;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.btn-pagination {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color, #ffffff);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-pagination:hover:not(:disabled) {
+  background: var(--text-color, #ffffff);
+  color: var(--bg-color, #0a0a0a);
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+}
+
+.btn-pagination:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.page-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-color, #ffffff);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-num:hover:not(.active):not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.page-num.active {
+  background: var(--text-color, #ffffff);
+  color: var(--bg-color, #0a0a0a);
+  border-color: var(--text-color, #ffffff);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.page-num:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-status-text {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.5px;
+  text-align: center;
+  margin-bottom: 3rem;
+  transition: color 0.3s ease;
+}
+
+/* Efek Transisi Kelembutan Render Foto */
+.gallery-card {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03); /* Latar belakang placeholder */
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Gambar disembunyikan sampai selesai dimuat dalam batch */
+.gallery-card img {
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-card img.loaded {
+  opacity: 1;
+}
+
+/* Animasi Pulse Skeleton saat menunggu antrean render */
+@keyframes skeletonPulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.25;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.gallery-card.loading-skeleton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  animation: skeletonPulse 1.5s ease infinite;
+  z-index: 1;
+}
+
+/* Hilangkan efek loading saat gambar siap tampil */
+.gallery-card:not(.loading-skeleton)::before {
+  display: none;
+}
+
+/* Adaptasi Warna untuk Light Mode */
+html[data-theme="light"] .btn-pagination,
+html[data-theme="light"] .page-num {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #1a1a1a;
+}
+
+html[data-theme="light"] .btn-pagination:hover:not(:disabled),
+html[data-theme="light"] .page-num.active {
+  background: #1a1a1a;
+  color: #ffffff;
+  border-color: #1a1a1a;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+html[data-theme="light"] .page-num:hover:not(.active):not(:disabled) {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .pagination-status-text {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+html[data-theme="light"] .gallery-card {
+  background: rgba(0, 0, 0, 0.05);
+}
+
 /* Footer */
 footer {
   border-top: 1px solid var(--border-color);
@@ -846,5 +1017,367 @@ footer {
   }
   .hero-title {
     font-size: 2.3rem;
+  }
+  /* ==========================================================================
+         DESAIN SPESIFIK & MANDIRI UNTUK HANGAT / ROMANTIS / PERSAHABATAN (ID 1 - 14)
+         Dibuat sangat kuat dan digabung selectornya agar langsung terbaca di browser
+         ========================================================================== */
+
+  /* 1. Gaya Card Teman Dekat (FOTO) */
+  .gallery-card.card-romantic {
+    background: rgba(30, 10, 15, 0.65) !important;
+    border: 1px solid rgba(244, 63, 94, 0.25) !important;
+    box-shadow: 0 4px 20px rgba(20, 5, 8, 0.45) !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  /* Dekorasi gradasi ambient kecil di dalam card */
+  .gallery-card.card-romantic::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(244, 63, 94, 0.06),
+      transparent 85%
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Hover Animasi Hangat */
+  .gallery-card.card-romantic:hover {
+    border-color: rgba(244, 63, 94, 0.6) !important;
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow:
+      0 15px 30px rgba(244, 63, 94, 0.35),
+      0 0 15px rgba(251, 113, 133, 0.25) !important;
+  }
+
+  /* Sentuhan Vintage Hangat ke Gambar */
+  .gallery-card.card-romantic img {
+    filter: sepia(0.08) contrast(1.02) saturate(1.05) !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .gallery-card.card-romantic:hover img {
+    filter: sepia(0) contrast(1.05) saturate(1.1) !important;
+  }
+
+  /* Overlay Gradasi Warna Sunset Peach / Rose */
+  .card-overlay.card-overlay-romantic {
+    background: linear-gradient(
+      to top,
+      rgba(29, 9, 13, 0.98) 0%,
+      rgba(29, 9, 13, 0.6) 50%,
+      transparent 100%
+    ) !important;
+  }
+
+  /* Gaya teks Badge Moment Indah */
+  .card-tag.card-tag-romantic {
+    color: #fecdd3 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(244, 63, 94, 0.6) !important;
+    font-family: var(--font-display);
+  }
+
+  /* Judul Moment Romantis */
+  .card-title.card-title-romantic {
+    color: #fffafb !important;
+    font-weight: 600 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  /* Light Mode adjustments untuk Card Romantis */
+  html[data-theme="light"] .gallery-card.card-romantic {
+    background: rgba(254, 242, 242, 0.85) !important;
+    border: 1px solid rgba(244, 63, 94, 0.2) !important;
+    box-shadow: 0 4px 15px rgba(244, 63, 94, 0.08) !important;
+  }
+
+  html[data-theme="light"] .gallery-card.card-romantic:hover {
+    border-color: rgba(244, 63, 94, 0.5) !important;
+    box-shadow: 0 10px 25px rgba(244, 63, 94, 0.2) !important;
+  }
+
+  html[data-theme="light"] .card-title.card-title-romantic {
+    color: #1f1012 !important;
+    text-shadow: none !important;
+  }
+
+  /* 2. Gaya Lightbox Khusus Moment Romantis */
+  .viewer-overlay.viewer-romantic {
+    background: rgba(
+      18,
+      10,
+      12,
+      0.98
+    ) !important; /* Latar belakang hangat gelap kemerahan */
+  }
+
+  /* Ambient lampion/fairy-light pendar di latar belakang lightbox */
+  .viewer-overlay.viewer-romantic::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(
+        circle at 15% 25%,
+        rgba(244, 63, 94, 0.12),
+        transparent 45%
+      ),
+      radial-gradient(
+        circle at 85% 75%,
+        rgba(245, 158, 11, 0.08),
+        transparent 50%
+      );
+    pointer-events: none;
+    z-index: 1001;
+    animation: romanticWarmPulse 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes romanticWarmPulse {
+    0% {
+      opacity: 0.75;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* Frame Media Box dengan kilauan mawar hangat */
+  .viewer-overlay.viewer-romantic #viewer-media-box {
+    border: 1px solid rgba(244, 63, 94, 0.3) !important;
+    box-shadow:
+      0 25px 65px rgba(0, 0, 0, 0.85),
+      0 0 35px rgba(244, 63, 94, 0.2),
+      0 0 15px rgba(245, 158, 11, 0.08) !important;
+    background: #120608 !important;
+  }
+
+  /* Tombol Navigasi Lightbox Spesifik Romantis */
+  .viewer-overlay.viewer-romantic .viewer-nav-btn {
+    background: rgba(244, 63, 94, 0.12) !important;
+    border: 1px solid rgba(244, 63, 94, 0.25) !important;
+    color: #fecdd3 !important;
+  }
+
+  .viewer-overlay.viewer-romantic .viewer-nav-btn:hover {
+    background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.45) !important;
+  }
+
+  /* Tombol Kontrol Atas (Close & Download) */
+  .viewer-overlay.viewer-romantic .viewer-btn {
+    background: rgba(244, 63, 94, 0.15) !important;
+    border: 1px solid rgba(244, 63, 94, 0.25) !important;
+    color: #fecdd3 !important;
+  }
+
+  .viewer-overlay.viewer-romantic .viewer-btn:hover {
+    background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.45) !important;
+  }
+
+  /* Informasi Teks Footer Lightbox */
+  .viewer-overlay.viewer-romantic #viewer-media-title {
+    color: #fff1f2 !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 10px rgba(244, 63, 94, 0.3) !important;
+  }
+
+  .viewer-overlay.viewer-romantic #viewer-media-desc {
+    color: #fda4af !important;
+    opacity: 0.95;
+  }
+
+  /* ==========================================================================
+         DESAIN SPESIFIK & MANDIRI UNTUK VIDEO CINEMATIC HANGAT (VIDEO ID 1 - 2)
+         Visual dibuat sama persis dengan foto romantis namun memakai selector video baru.
+         ========================================================================== */
+
+  /* 1. Gaya Card Teman Dekat (VIDEO) */
+  .gallery-card.card-romantic-video {
+    background: rgba(30, 10, 15, 0.65) !important;
+    border: 1px solid rgba(244, 63, 94, 0.25) !important;
+    box-shadow: 0 4px 20px rgba(20, 5, 8, 0.45) !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  /* Dekorasi gradasi ambient kecil di dalam card */
+  .gallery-card.card-romantic-video::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(244, 63, 94, 0.06),
+      transparent 85%
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Hover Animasi Hangat pada Card Video */
+  .gallery-card.card-romantic-video:hover {
+    border-color: rgba(244, 63, 94, 0.6) !important;
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow:
+      0 15px 30px rgba(244, 63, 94, 0.35),
+      0 0 15px rgba(251, 113, 133, 0.25) !important;
+  }
+
+  /* Sentuhan Vintage Hangat ke Video */
+  .gallery-card.card-romantic-video video {
+    filter: sepia(0.08) contrast(1.02) saturate(1.05) !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .gallery-card.card-romantic-video:hover video {
+    filter: sepia(0) contrast(1.05) saturate(1.1) !important;
+  }
+
+  /* Overlay Gradasi Warna Sunset Peach / Rose khusus Video */
+  .card-overlay.card-overlay-romantic-video {
+    background: linear-gradient(
+      to top,
+      rgba(29, 9, 13, 0.98) 0%,
+      rgba(29, 9, 13, 0.6) 50%,
+      transparent 100%
+    ) !important;
+  }
+
+  /* Badge Play khusus Video Romantis */
+  .play-badge.play-badge-romantic-video {
+    background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%) !important;
+    box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4) !important;
+  }
+
+  .gallery-card.card-romantic-video:hover
+    .play-badge.play-badge-romantic-video {
+    transform: translate(-50%, -50%) scale(1.15) !important;
+    box-shadow: 0 6px 20px #f43f5e !important;
+  }
+
+  /* Gaya teks Badge Moment Indah pada Video */
+  .card-tag.card-tag-romantic-video {
+    color: #fecdd3 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(244, 63, 94, 0.6) !important;
+    font-family: var(--font-display);
+  }
+
+  /* Judul Video Romantis */
+  .card-title.card-title-romantic-video {
+    color: #fffafb !important;
+    font-weight: 600 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  /* Light Mode adjustments untuk Card Video Romantis */
+  html[data-theme="light"] .gallery-card.card-romantic-video {
+    background: rgba(254, 242, 242, 0.85) !important;
+    border: 1px solid rgba(244, 63, 94, 0.2) !important;
+    box-shadow: 0 4px 15px rgba(244, 63, 94, 0.08) !important;
+  }
+
+  html[data-theme="light"] .gallery-card.card-romantic-video:hover {
+    border-color: rgba(244, 63, 94, 0.5) !important;
+    box-shadow: 0 10px 25px rgba(244, 63, 94, 0.2) !important;
+  }
+
+  html[data-theme="light"] .card-title.card-title-romantic-video {
+    color: #1f1012 !important;
+    text-shadow: none !important;
+  }
+
+  /* 2. Gaya Lightbox Khusus Moment Video Romantis */
+  .viewer-overlay.viewer-romantic-video {
+    background: rgba(
+      18,
+      10,
+      12,
+      0.98
+    ) !important; /* Latar belakang hangat gelap kemerahan */
+  }
+
+  /* Ambient lampion/fairy-light pendar di latar belakang lightbox video */
+  .viewer-overlay.viewer-romantic-video::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(
+        circle at 15% 25%,
+        rgba(244, 63, 94, 0.12),
+        transparent 45%
+      ),
+      radial-gradient(
+        circle at 85% 75%,
+        rgba(245, 158, 11, 0.08),
+        transparent 50%
+      );
+    pointer-events: none;
+    z-index: 1001;
+    animation: romanticWarmPulse 6s ease-in-out infinite alternate;
+  }
+
+  /* Frame Media Box dengan kilauan mawar hangat khusus video player */
+  .viewer-overlay.viewer-romantic-video #viewer-media-box {
+    border: 1px solid rgba(244, 63, 94, 0.3) !important;
+    box-shadow:
+      0 25px 65px rgba(0, 0, 0, 0.85),
+      0 0 35px rgba(244, 63, 94, 0.2),
+      0 0 15px rgba(245, 158, 11, 0.08) !important;
+    background: #120608 !important;
+  }
+
+  /* Tombol Navigasi Lightbox Video Romantis */
+  .viewer-overlay.viewer-romantic-video .viewer-nav-btn {
+    background: rgba(244, 63, 94, 0.12) !important;
+    border: 1px solid rgba(244, 63, 94, 0.25) !important;
+    color: #fecdd3 !important;
+  }
+
+  .viewer-overlay.viewer-romantic-video .viewer-nav-btn:hover {
+    background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.45) !important;
+  }
+
+  /* Tombol Kontrol Atas Video Romantis (Close & Download) */
+  .viewer-overlay.viewer-romantic-video .viewer-btn {
+    background: rgba(244, 63, 94, 0.15) !important;
+    border: 1px solid rgba(244, 63, 94, 0.25) !important;
+    color: #fecdd3 !important;
+  }
+
+  .viewer-overlay.viewer-romantic-video .viewer-btn:hover {
+    background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.45) !important;
+  }
+
+  /* Teks Footer Lightbox Video */
+  .viewer-overlay.viewer-romantic-video #viewer-media-title {
+    color: #fff1f2 !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 10px rgba(244, 63, 94, 0.3) !important;
+  }
+
+  .viewer-overlay.viewer-romantic-video #viewer-media-desc {
+    color: #fda4af !important;
+    opacity: 0.95;
   }
 }

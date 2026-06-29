@@ -1,0 +1,1721 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Radithya Putra Pratama - Personal Website - Album Kenangan - Reminiscing
+      Diversity Day 2
+    </title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/logo.png"
+    />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      .pagination-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 3rem 0 1rem 0;
+        gap: 0.75rem;
+        width: 100%;
+      }
+
+      .btn-pagination {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-color, #ffffff);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-pagination:hover:not(:disabled) {
+        background: var(--text-color, #ffffff);
+        color: var(--bg-color, #0a0a0a);
+        transform: scale(1.08);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+      }
+
+      .btn-pagination:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .pagination-numbers {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .page-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--text-color, #ffffff);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .page-num:hover:not(.active):not(:disabled) {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .page-num.active {
+        background: var(--text-color, #ffffff);
+        color: var(--bg-color, #0a0a0a);
+        border-color: var(--text-color, #ffffff);
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+      }
+
+      .page-num:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .pagination-status-text {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 0.5px;
+        text-align: center;
+        margin-bottom: 3rem;
+        transition: color 0.3s ease;
+      }
+
+      /* Efek Transisi Kelembutan Render Foto */
+      .gallery-card {
+        position: relative;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.03);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      /* Gambar disembunyikan sampai selesai dimuat dalam batch */
+      .gallery-card img {
+        opacity: 0;
+        transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity;
+      }
+
+      .gallery-card img.loaded {
+        opacity: 1;
+      }
+
+      /* Animasi Pulse Skeleton saat menunggu antrean render */
+      @keyframes skeletonPulse {
+        0% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 0.25;
+        }
+        100% {
+          opacity: 0.5;
+        }
+      }
+
+      .gallery-card.loading-skeleton::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.05),
+          transparent
+        );
+        animation: skeletonPulse 1.5s ease infinite;
+        z-index: 1;
+      }
+
+      /* Hilangkan efek loading saat gambar siap tampil */
+      .gallery-card:not(.loading-skeleton)::before {
+        display: none;
+      }
+
+      /* Adaptasi Warna untuk Light Mode */
+      html[data-theme="light"] .btn-pagination,
+      html[data-theme="light"] .page-num {
+        background: rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: #1a1a1a;
+      }
+
+      html[data-theme="light"] .btn-pagination:hover:not(:disabled),
+      html[data-theme="light"] .page-num.active {
+        background: #1a1a1a;
+        color: #ffffff;
+        border-color: #1a1a1a;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      html[data-theme="light"] .page-num:hover:not(.active):not(:disabled) {
+        background: rgba(0, 0, 0, 0.08);
+      }
+
+      html[data-theme="light"] .pagination-status-text {
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      html[data-theme="light"] .gallery-card {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mouse Glow Effect -->
+    <div id="mouse-glow"></div>
+
+    <!-- Header Controls -->
+    <div class="header-controls">
+      <a
+        href="https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/"
+        class="btn-back-home"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 19"></polyline>
+        </svg>
+        Kembali ke Beranda
+      </a>
+
+      <!-- Theme Switcher (3-Modes) -->
+      <div class="theme-switcher">
+        <button
+          class="theme-btn active"
+          data-theme-val="default"
+          title="Default Theme"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+        <button class="theme-btn" data-theme-val="dark" title="Dark Mode">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="theme-btn" data-theme-val="light" title="Light Mode">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <h1 class="hero-title">Reminiscing Diversity Day 2</h1>
+      <p class="hero-desc">Pentas Seni</p>
+    </div>
+
+    <!-- Minimal Nav Section Switcher -->
+    <div class="section-nav">
+      <button class="nav-btn active" onclick="switchSection('photo')">
+        Galeri Foto
+      </button>
+      <button class="nav-btn" onclick="switchSection('video')">
+        Galeri Video
+      </button>
+    </div>
+
+    <!-- Gallery Container -->
+    <div class="gallery-container">
+      <!-- Photo Section -->
+      <div id="photo-section" class="gallery-section active">
+        <div class="gallery-grid" id="photo-grid">
+          <!-- Dinamis di-render oleh JS -->
+        </div>
+
+        <!-- Wadah Kontrol Halaman (Pagination) -->
+        <div
+          id="pagination-wrapper"
+          class="pagination-container"
+          style="display: none"
+        >
+          <button
+            class="btn-pagination"
+            id="prev-page-btn"
+            onclick="changePage(-1)"
+            title="Halaman Sebelumnya"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="pagination-numbers" id="pagination-numbers">
+            <!-- Render nomor halaman dinamis -->
+          </div>
+
+          <button
+            class="btn-pagination"
+            id="next-page-btn"
+            onclick="changePage(1)"
+            title="Halaman Berikutnya"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div id="pagination-status" class="pagination-status-text"></div>
+      </div>
+
+      <!-- Video Section -->
+      <div id="video-section" class="gallery-section">
+        <div class="gallery-grid" id="video-grid">
+          <!-- Dinamis di-render oleh JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Lightbox/Floating Viewer Overlay -->
+    <div class="viewer-overlay" id="media-viewer">
+      <!-- Top controls -->
+      <div class="viewer-header">
+        <button class="viewer-btn" id="download-btn" title="Unduh File">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </button>
+        <button class="viewer-btn" onclick="closeViewer()" title="Tutup">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation Arrows -->
+      <button class="viewer-nav-btn nav-left" onclick="navigateMedia(-1)">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <button class="viewer-nav-btn nav-right" onclick="navigateMedia(1)">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      <!-- Media Content Area -->
+      <div class="viewer-content-wrap">
+        <div class="viewer-media-box" id="viewer-media-box">
+          <!-- Target render dinamis -->
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="viewer-footer-info">
+        <div class="viewer-media-title" id="viewer-media-title">Judul Item</div>
+        <div class="viewer-media-desc" id="viewer-media-desc">
+          Kategori / Deskripsi Item
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-container">
+        <div class="footer-logo">Radithya Putra Pratama</div>
+        <div class="footer-copyright">
+          &copy; <span id="footer-year"></span> Radithya. All Rights Reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+      // 119 Data Foto (Menggunakan URL Github Pages)
+      const photos = [
+        {
+          id: 1,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/1.jpeg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 2,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/2.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 3,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/3.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 4,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/4.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 5,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/5.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 6,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/6.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 7,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/7.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 8,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/8.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 9,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/9.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 10,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/10.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 11,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/11.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 12,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/12.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 13,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/13.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 14,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/14.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 15,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/15.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 16,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/16.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 17,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/17.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 18,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/18.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 19,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/19.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 20,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/20.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 21,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/21.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 22,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/22.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 23,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/23.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 24,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/24.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 25,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/25.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 26,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/26.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 27,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/27.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 28,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/28.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 29,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/29.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 30,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/30.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 31,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/31.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 32,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/32.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 33,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/33.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 34,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/34.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 35,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/35.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 36,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/36.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 37,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/37.jpg",
+          desc: "Foto by Adik Kelas 8",
+        },
+        {
+          id: 38,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/38.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 39,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/39.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 40,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/40.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 41,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/41.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 42,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/42.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 43,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/43.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 44,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/44.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 45,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/45.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 46,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/46.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 47,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/47.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 48,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/48.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 49,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/49.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 50,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/50.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 51,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/51.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 52,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/52.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 53,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/53.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 54,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/54.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 55,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/55.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 56,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/56.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 57,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/57.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 58,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/58.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 59,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/59.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 60,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/60.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 61,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/61.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 62,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/62.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 63,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/63.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 64,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/64.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 65,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/65.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 66,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/66.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 67,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/67.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 68,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/68.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 69,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/69.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 70,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/70.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 71,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/71.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 72,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/72.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 73,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/73.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 74,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/74.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 75,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/75.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 76,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/76.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 77,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/77.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 78,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/78.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 79,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/79.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 80,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/80.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 81,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/81.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 82,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/82.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 83,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/83.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 84,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/84.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 85,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/85.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 86,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/86.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 87,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/87.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 88,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/88.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 89,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/89.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 90,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/90.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 91,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/91.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 92,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/92.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 93,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/93.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 94,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/94.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 95,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/95.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 96,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/96.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 97,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/97.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 98,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/98.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 99,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/99.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 100,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/100.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 101,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/101.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 102,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/102.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 103,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/103.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 104,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/104.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 105,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/105.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 106,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/106.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 107,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/107.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 108,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/108.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 109,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/109.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 110,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/110.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 112,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/111.jpg",
+          desc: "Foto by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 113,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/112.jpeg",
+          desc: "Foto by Raden Roro Arsyila P. M. Ketua OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 114,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/113.jpeg",
+          desc: "Foto by Raden Roro Arsyila P. M. Ketua OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 115,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/114.jpeg",
+          desc: "Foto by Raden Roro Arsyila P. M. Ketua OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 116,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/115.jpeg",
+          desc: "Foto by Raden Roro Arsyila P. M. Ketua OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 117,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/116.jpeg",
+          desc: "Foto by Raden Roro Arsyila P. M. Ketua OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 118,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/117.jpeg",
+          desc: "Foto by Raden Roro Arsyila P. M. Ketua OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+        {
+          id: 119,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/img/reminiscing-diversity akt 30/day 2/118.jpeg",
+          desc: "Foto by Raden Roro Arsyila P. M. Ketua OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+      ];
+
+      // Data Video (Menggunakan URL Github Pages)
+      const videos = [
+        {
+          id: 1,
+          title: "20 Mei 2026",
+          src: "https://radithya1210.github.io/Radithya-Putra-Pratama---Personal-Website/asset/",
+          desc: "Video by Devan OSIS SMPN 11 TANGSEL Periode 2025/2026",
+        },
+      ];
+
+      let currentSection = "photo"; // 'photo' atau 'video'
+      let activeIndex = 0; // Index media yang sedang aktif di viewer
+
+      // STATE UNTUK HALAMAN FOTO (PAGINATION PINTAR)
+      let currentPage = 1;
+      let totalPages = 1;
+      let itemsPerPage = 20; // Dibatasi 20 items per halaman untuk optimasi RAM ekstrim
+
+      // Array penampung objek Image yang aktif mengunduh untuk pembatalan instan saat ganti halaman
+      let activeImageLoaders = [];
+      let activeLoadSessionId = 0;
+
+      // Helper CDN Image Compressor Proxy (weserv.nl)
+      // Dipaksa kompresi ke resolusi 320px dengan format WEBP output & kualitas 40% (Ringan sekali untuk RAM)
+      function getCompressedUrl(originalSrc) {
+        return `https://images.weserv.nl/?url=${encodeURIComponent(originalSrc)}&w=320&q=40&output=webp`;
+      }
+
+      // Fungsi vital untuk menghancurkan referensi gambar lama secara instan sebelum dihapus dari DOM
+      function cleanupCurrentGridImages() {
+        const grid = document.getElementById("photo-grid");
+        if (grid) {
+          const imgs = grid.querySelectorAll("img");
+          imgs.forEach((img) => {
+            img.onload = null;
+            img.onerror = null;
+            // Mengarahkan ke minimal data-URI memaksa browser menghapus cache dekode pixel dari memori RAM
+            img.src =
+              "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>";
+          });
+        }
+      }
+
+      // Fungsi untuk menghentikan & membatalkan semua koneksi HTTP gambar yang sedang berjalan
+      function cancelPendingDownloads() {
+        activeImageLoaders.forEach((img) => {
+          img.onload = null;
+          img.onerror = null;
+          img.src =
+            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>";
+        });
+        activeImageLoaders = [];
+      }
+
+      // Fungsi menginisialisasi pembagian foto pintar per halaman
+      function initPhotoPagination() {
+        const total = photos.length;
+        // Gunakan batas konstan 20 foto per halaman untuk menjamin stabilitas RAM di semua gawai
+        itemsPerPage = 20;
+        totalPages = Math.ceil(total / itemsPerPage);
+        currentPage = 1;
+      }
+
+      // Render Photo Cards berdasarkan Halaman dengan pembersihan sampah memori ketat
+      async function renderPhotos() {
+        // 1. Bersihkan sampah memori dari halaman sebelumnya terlebih dahulu
+        cleanupCurrentGridImages();
+        cancelPendingDownloads();
+
+        activeLoadSessionId++;
+        const currentSession = activeLoadSessionId;
+
+        const grid = document.getElementById("photo-grid");
+        grid.innerHTML = "";
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, photos.length);
+        const visiblePhotos = photos.slice(startIndex, endIndex);
+
+        // Langkah 1: Render kerangka/skeleton instan
+        visiblePhotos.forEach((photo, index) => {
+          const globalIndex = startIndex + index;
+          const card = `
+            <div class="gallery-card loading-skeleton" id="card-${globalIndex}" onclick="openViewer(${globalIndex}, 'photo')">
+              <img alt="${photo.title}" />
+              <div class="card-overlay">
+                <span class="card-tag">Foto</span>
+                <h3 class="card-title">${photo.title}</h3>
+              </div>
+            </div>
+          `;
+          grid.insertAdjacentHTML("beforeend", card);
+        });
+
+        // Perbarui Kontrol Navigasi Halaman
+        const paginationWrapper = document.getElementById("pagination-wrapper");
+        const paginationStatus = document.getElementById("pagination-status");
+
+        if (totalPages > 1) {
+          paginationWrapper.style.display = "flex";
+          paginationStatus.style.display = "block";
+          paginationStatus.textContent = `Menampilkan ${startIndex + 1} - ${endIndex} dari ${photos.length} foto (Halaman ${currentPage} dari ${totalPages})`;
+          renderPaginationControls();
+        } else {
+          paginationWrapper.style.display = "none";
+          paginationStatus.style.display = "none";
+        }
+
+        // Langkah 2: Proses pemuatan gambar sekuensial (Batching berurutan per 5 foto demi menjaga CPU)
+        const batchSize = 5;
+        for (let i = 0; i < visiblePhotos.length; i += batchSize) {
+          // Jika pengguna telah berpindah halaman, hentikan pemrosesan batch lama seketika
+          if (currentSession !== activeLoadSessionId) return;
+
+          const batch = visiblePhotos.slice(i, i + batchSize);
+
+          // Muat batch kecil secara paralel
+          const batchPromises = batch.map((photo, batchIndex) => {
+            const globalIndex = startIndex + i + batchIndex;
+            return new Promise((resolve) => {
+              const cardElement = document.getElementById(
+                `card-${globalIndex}`,
+              );
+              const imgElement = cardElement
+                ? cardElement.querySelector("img")
+                : null;
+
+              if (!imgElement) {
+                resolve();
+                return;
+              }
+
+              const tempImg = new Image();
+              activeImageLoaders.push(tempImg);
+
+              const compressedSrc = getCompressedUrl(photo.src);
+
+              tempImg.onload = () => {
+                if (currentSession === activeLoadSessionId) {
+                  imgElement.src = compressedSrc;
+                  imgElement.classList.add("loaded");
+                  cardElement.classList.remove("loading-skeleton");
+                }
+                activeImageLoaders = activeImageLoaders.filter(
+                  (item) => item !== tempImg,
+                );
+                resolve();
+              };
+
+              tempImg.onerror = () => {
+                if (currentSession === activeLoadSessionId) {
+                  // Fallback src asli jika proxy gagal
+                  imgElement.src = photo.src;
+                  imgElement.classList.add("loaded");
+                  cardElement.classList.remove("loading-skeleton");
+                }
+                activeImageLoaders = activeImageLoaders.filter(
+                  (item) => item !== tempImg,
+                );
+                resolve();
+              };
+
+              tempImg.src = compressedSrc;
+            });
+          });
+
+          // Jeda mikro 40ms antar batch agar browser memiliki waktu untuk melakukan garbage collection & rendering frame
+          await Promise.all([
+            Promise.all(batchPromises),
+            new Promise((resolve) => setTimeout(resolve, 40)),
+          ]);
+        }
+      }
+
+      // Render tombol nomor halaman secara dinamis
+      function renderPaginationControls() {
+        const prevBtn = document.getElementById("prev-page-btn");
+        const nextBtn = document.getElementById("next-page-btn");
+        const numContainer = document.getElementById("pagination-numbers");
+
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+
+        numContainer.innerHTML = "";
+
+        // Render semua halaman (total 6 halaman sangat pas untuk diletakkan langsung)
+        for (let i = 1; i <= totalPages; i++) {
+          const numBtn = document.createElement("button");
+          numBtn.className = `page-num ${i === currentPage ? "active" : ""}`;
+          numBtn.textContent = i;
+          numBtn.onclick = () => goToPage(i);
+          numContainer.appendChild(numBtn);
+        }
+      }
+
+      // Fungsi berpindah halaman secara Langsung/Instan (Memicu render urut bebas lag)
+      function goToPage(pageNumber) {
+        if (
+          pageNumber < 1 ||
+          pageNumber > totalPages ||
+          pageNumber === currentPage
+        )
+          return;
+
+        currentPage = pageNumber;
+        renderPhotos();
+
+        // Auto scroll kembali ke atas galeri secara halus
+        document
+          .querySelector(".section-nav")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      // Navigasi via tombol Panah Kiri / Kanan
+      function changePage(direction) {
+        goToPage(currentPage + direction);
+      }
+
+      // Render Video Cards dengan pemanfaatan Tag Video (#t=1) sebagai generator thumbnail otomatis
+      function renderVideos() {
+        const grid = document.getElementById("video-grid");
+        grid.innerHTML = "";
+
+        if (videos.length === 0) {
+          grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; opacity: 0.5; padding: 2rem;">Belum ada video saat ini.</p>`;
+          return;
+        }
+
+        videos.forEach((video, index) => {
+          const card = `
+            <div class="gallery-card" onclick="openViewer(${index}, 'video')">
+              <div class="video-thumbnail-wrapper">
+                <video src="${video.src}#t=1" preload="metadata" muted playsinline></video>
+                <div class="play-badge">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                </div>
+              </div>
+              <div class="card-overlay">
+                <span class="card-tag">Video</span>
+                <h3 class="card-title">${video.title}</h3>
+              </div>
+            </div>
+          `;
+          grid.insertAdjacentHTML("beforeend", card);
+        });
+      }
+
+      // Switch Section
+      function switchSection(section) {
+        currentSection = section;
+        const navBtns = document.querySelectorAll(".nav-btn");
+        const photoSec = document.getElementById("photo-section");
+        const videoSec = document.getElementById("video-section");
+
+        navBtns.forEach((btn) => btn.classList.remove("active"));
+
+        if (section === "photo") {
+          navBtns[0].classList.add("active");
+          photoSec.classList.add("active");
+          videoSec.classList.remove("active");
+        } else {
+          navBtns[1].classList.add("active");
+          videoSec.classList.add("active");
+          photoSec.classList.remove("active");
+        }
+      }
+
+      // Open Floating Viewer (Lightbox)
+      function openViewer(index, type) {
+        activeIndex = index;
+        currentSection = type;
+        const viewer = document.getElementById("media-viewer");
+        viewer.classList.add("active");
+        renderViewerContent();
+      }
+
+      // Close Viewer
+      function closeViewer() {
+        const viewer = document.getElementById("media-viewer");
+        viewer.classList.remove("active");
+        const mediaBox = document.getElementById("viewer-media-box");
+
+        // Hentikan video agar tidak bersuara di background saat ditutup
+        mediaBox.innerHTML = "";
+      }
+
+      // Render Viewer Content - PENTING: Lightbox & Unduh menggunakan SRC asli (HD / Kualitas Penuh)
+      function renderViewerContent() {
+        const mediaBox = document.getElementById("viewer-media-box");
+        const titleEl = document.getElementById("viewer-media-title");
+        const descEl = document.getElementById("viewer-media-desc");
+        const downloadBtn = document.getElementById("download-btn");
+
+        const items = currentSection === "photo" ? photos : videos;
+        const currentItem = items[activeIndex];
+
+        titleEl.textContent = currentItem.title;
+        descEl.textContent = currentItem.desc || "";
+
+        // Handler Unduh Berkualitas Tinggi (Menggunakan berkas asli original, TANPA kompresi)
+        downloadBtn.onclick = () => {
+          const link = document.createElement("a");
+          link.href = currentItem.src;
+          link.download = currentItem.title;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        };
+
+        if (currentSection === "photo") {
+          // Lightbox menggunakan RESOLUSI ASLI FULL HD demi kepuasan pandangan visual
+          mediaBox.innerHTML = `<img src="${currentItem.src}" alt="${currentItem.title}">`;
+        } else {
+          // Render pemutar video kustom premium
+          mediaBox.innerHTML = `
+            <div class="custom-player-wrapper" id="custom-video-wrapper">
+              <video id="kustom-video-el" src="${currentItem.src}"></video>
+
+              <!-- Tombol Play Raksasa di Tengah -->
+              <div class="giant-play-btn" onclick="toggleKustomPlay()">
+                <svg id="giant-play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+              </div>
+
+              <!-- Bar Kontrol Kustom -->
+              <div class="video-custom-controls">
+
+                <!-- Progress bar -->
+                <div class="video-timeline-container" id="video-timeline" onclick="seekVideo(event)">
+                  <div class="video-timeline-fill" id="video-timeline-fill"></div>
+                  <div class="video-timeline-handle" id="video-timeline-handle"></div>
+                </div>
+
+                <!-- Tombol aksi -->
+                <div class="video-controls-row">
+                  <div class="video-controls-left">
+                    <button class="video-control-btn" onclick="toggleKustomPlay()">
+                      <svg id="video-play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                      </svg>
+                    </button>
+                    <div class="video-time-display">
+                      <span id="v-current-time">0:00</span> / <span id="v-total-time">0:00</span>
+                    </div>
+                  </div>
+
+                  <div class="video-controls-right">
+                    <!-- Volume Control -->
+                    <div class="video-volume-wrap">
+                      <button class="video-control-btn" onclick="toggleMute()">
+                        <svg id="volume-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                      </button>
+                      <div class="video-volume-slider" onclick="adjustVideoVolume(event)">
+                        <div class="video-volume-fill" id="v-volume-fill"></div>
+                      </div>
+                    </div>
+
+                    <!-- Fullscreen -->
+                    <button class="video-control-btn" onclick="toggleFullscreen()">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          `;
+
+          // Jalankan inisialisasi pemutar video kustom
+          initCustomVideoPlayer();
+        }
+      }
+
+      // Navigasi Media (Kiri / Kanan)
+      function navigateMedia(direction) {
+        const items = currentSection === "photo" ? photos : videos;
+        activeIndex += direction;
+
+        if (activeIndex < 0) {
+          activeIndex = items.length - 1;
+        } else if (activeIndex >= items.length) {
+          activeIndex = 0;
+        }
+
+        renderViewerContent();
+      }
+
+      // --- KUSTOM VIDEO PLAYER ENGINE ---
+      let vElement,
+        vTimelineFill,
+        vTimelineHandle,
+        vPlayIcon,
+        vGiantPlayIcon,
+        vCurrentTime,
+        vTotalTime,
+        vVolumeFill,
+        vVolumeIcon;
+
+      function initCustomVideoPlayer() {
+        vElement = document.getElementById("kustom-video-el");
+        vTimelineFill = document.getElementById("video-timeline-fill");
+        vTimelineHandle = document.getElementById("video-timeline-handle");
+        vPlayIcon = document.getElementById("video-play-icon");
+        vGiantPlayIcon = document.getElementById("giant-play-icon");
+        vCurrentTime = document.getElementById("v-current-time");
+        vTotalTime = document.getElementById("v-total-time");
+        vVolumeFill = document.getElementById("v-volume-fill");
+        vVolumeIcon = document.getElementById("volume-icon");
+
+        vElement.addEventListener("timeupdate", () => {
+          const curTime = vElement.currentTime;
+          const duration = vElement.duration || 1;
+          const percentage = (curTime / duration) * 100;
+
+          if (vTimelineFill) vTimelineFill.style.width = `${percentage}%`;
+          if (vTimelineHandle) vTimelineHandle.style.left = `${percentage}%`;
+
+          if (vCurrentTime) {
+            const min = Math.floor(curTime / 60);
+            const sec = Math.floor(curTime % 60)
+              .toString()
+              .padStart(2, "0");
+            vCurrentTime.textContent = `${min}:${sec}`;
+          }
+        });
+
+        vElement.addEventListener("loadedmetadata", () => {
+          const duration = vElement.duration;
+          const min = Math.floor(duration / 60);
+          const sec = Math.floor(duration % 60)
+            .toString()
+            .padStart(2, "0");
+          if (vTotalTime) vTotalTime.textContent = `${min}:${sec}`;
+        });
+
+        vElement.addEventListener("ended", () => {
+          vElement.currentTime = 0;
+          updateVideoIcons(false);
+        });
+      }
+
+      function toggleKustomPlay() {
+        if (!vElement) return;
+        if (vElement.paused) {
+          vElement.play();
+          updateVideoIcons(true);
+        } else {
+          vElement.pause();
+          updateVideoIcons(false);
+        }
+      }
+
+      function updateVideoIcons(isPlaying) {
+        if (isPlaying) {
+          vPlayIcon.outerHTML = `
+            <svg id="video-play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          `;
+          vGiantPlayIcon.outerHTML = `
+            <svg id="giant-play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          `;
+        } else {
+          vPlayIcon.outerHTML = `
+            <svg id="video-play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          `;
+          vGiantPlayIcon.outerHTML = `
+            <svg id="giant-play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          `;
+        }
+        vPlayIcon = document.getElementById("video-play-icon");
+        vGiantPlayIcon = document.getElementById("giant-play-icon");
+      }
+
+      // --- MOUSE FOLLOW EFFECT ---
+      const glowOrb = document.getElementById("mouse-glow");
+      document.addEventListener("mousemove", (e) => {
+        glowOrb.style.opacity = "1";
+        glowOrb.style.left = e.clientX + "px";
+        glowOrb.style.top = e.clientY + "px";
+      });
+      document.addEventListener("mouseleave", () => {
+        glowOrb.style.opacity = "0";
+      });
+
+      // --- 3-THEME CONFIGURATION ---
+      const themeBtns = document.querySelectorAll(".theme-btn");
+
+      function setTheme(themeName) {
+        if (themeName === "default") {
+          document.documentElement.removeAttribute("data-theme");
+        } else {
+          document.documentElement.setAttribute("data-theme", themeName);
+        }
+        localStorage.setItem("radithya-portfolio-theme", themeName);
+
+        themeBtns.forEach((btn) => {
+          if (btn.getAttribute("data-theme-val") === themeName) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+      }
+
+      const storedTheme =
+        localStorage.getItem("radithya-portfolio-theme") || "default";
+      setTheme(storedTheme);
+
+      themeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const selectedTheme = btn.getAttribute("data-theme-val");
+          setTheme(selectedTheme);
+        });
+      });
+
+      // Key Listener for Lightbox Navigations (Arrow keys and Escape)
+      document.addEventListener("keydown", (e) => {
+        const viewer = document.getElementById("media-viewer");
+        if (viewer.classList.contains("active")) {
+          if (e.key === "ArrowRight") navigateMedia(1);
+          if (e.key === "ArrowLeft") navigateMedia(-1);
+          if (e.key === "Escape") closeViewer();
+        }
+      });
+
+      // DOM Content Loaded Initializer
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("footer-year").textContent =
+          new Date().getFullYear();
+
+        // Jalankan inisialisasi pembagian foto pintar sebelum me-render foto
+        initPhotoPagination();
+        renderPhotos();
+        renderVideos();
+      });
+    </script>
+  </body>
+</html>
