@@ -451,7 +451,6 @@
 
     <!-- JS Logic -->
     <script>
-      // 11 Data Foto Eight Seven (Menggunakan URL Github Pages)
       const photos = [
         {
           id: 1,
@@ -527,19 +526,34 @@
       let currentSection = "photo"; // 'photo' atau 'video'
       let activeIndex = 0; // Index media yang sedang aktif di viewer
 
-      // STATE UNTUK HALAMAN FOTO (PAGINATION PINTAR)
+      // STATE UNTUK HALAMAN FOTO (PAGINATION PINTAR & PENJAGA RAM)
       let currentPage = 1;
       let totalPages = 1;
-      let itemsPerPage = 37; // Default items per halaman
+      let itemsPerPage = 20; // Dibatasi 20 items per halaman untuk optimasi RAM ekstrim
 
       // Array penampung objek Image yang aktif mengunduh untuk pembatalan instan saat ganti halaman
       let activeImageLoaders = [];
       let activeLoadSessionId = 0;
 
       // Helper CDN Image Compressor Proxy (weserv.nl)
-      // Ini akan memperkecil lebar gambar menjadi 400px dan mengompres kualitasnya hingga 60%
+      // Dipaksa kompresi ke resolusi 320px dengan format WEBP output & kualitas 40% (Ringan sekali untuk RAM)
       function getCompressedUrl(originalSrc) {
-        return `https://images.weserv.nl/?url=${encodeURIComponent(originalSrc)}&w=400&q=60`;
+        return `https://images.weserv.nl/?url=${encodeURIComponent(originalSrc)}&w=320&q=40&output=webp`;
+      }
+
+      // Fungsi vital untuk menghancurkan referensi gambar lama secara instan sebelum dihapus dari DOM
+      function cleanupCurrentGridImages() {
+        const grid = document.getElementById("photo-grid");
+        if (grid) {
+          const imgs = grid.querySelectorAll("img");
+          imgs.forEach((img) => {
+            img.onload = null;
+            img.onerror = null;
+            // Mengarahkan ke minimal data-URI memaksa browser menghapus cache dekode pixel dari memori RAM
+            img.src =
+              "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>";
+          });
+        }
       }
 
       // Fungsi untuk menghentikan & membatalkan semua koneksi HTTP gambar yang sedang berjalan
@@ -547,7 +561,8 @@
         activeImageLoaders.forEach((img) => {
           img.onload = null;
           img.onerror = null;
-          img.src = ""; // Mengubah src menjadi kosong memaksa browser menghentikan unduhan berjalan
+          img.src =
+            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>";
         });
         activeImageLoaders = [];
       }
@@ -555,26 +570,16 @@
       // Fungsi menginisialisasi pembagian foto pintar per halaman
       function initPhotoPagination() {
         const total = photos.length;
-        if (total > 20) {
-          // Pembagian pintar: jika di atas 60, bagi menjadi 3 halaman rata
-          if (total > 60) {
-            itemsPerPage = Math.ceil(total / 3);
-          } else {
-            // Jika antara 21 s.d 60, gunakan porsi halaman standar 20 foto
-            itemsPerPage = 20;
-          }
-          totalPages = Math.ceil(total / itemsPerPage);
-          currentPage = 1;
-        } else {
-          itemsPerPage = total;
-          totalPages = 1;
-          currentPage = 1;
-        }
+        // Gunakan batas konstan 20 foto per halaman untuk menjaga stabilitas RAM
+        itemsPerPage = 20;
+        totalPages = Math.ceil(total / itemsPerPage);
+        currentPage = 1;
       }
 
-      // Render Photo Cards berdasarkan Halaman dengan aturan muat berurutan kelompok 10 foto yang dioptimalkan
+      // Render Photo Cards berdasarkan Halaman dengan pembersihan sampah memori ketat
       async function renderPhotos() {
-        // Hentikan dan batalkan pengunduhan halaman sebelumnya agar tidak menyumbat jaringan
+        // 1. Bersihkan sampah memori dari halaman sebelumnya terlebih dahulu
+        cleanupCurrentGridImages();
         cancelPendingDownloads();
 
         activeLoadSessionId++;
@@ -587,7 +592,7 @@
         const endIndex = Math.min(startIndex + itemsPerPage, photos.length);
         const visiblePhotos = photos.slice(startIndex, endIndex);
 
-        // Langkah 1: Render kerangka/skeleton instan agar tata letak tidak melompat
+        // Langkah 1: Render kerangka/skeleton instan
         visiblePhotos.forEach((photo, index) => {
           const globalIndex = startIndex + index;
           const card = `
@@ -616,15 +621,15 @@
           paginationStatus.style.display = "none";
         }
 
-        // Langkah 2: Proses pemuatan gambar sekuensial (Batching berurutan per 10 foto) menggunakan versi Terkompresi
-        const batchSize = 10;
+        // Langkah 2: Proses pemuatan gambar sekuensial (Batching berurutan per 5 foto demi menjaga CPU)
+        const batchSize = 5;
         for (let i = 0; i < visiblePhotos.length; i += batchSize) {
           // Jika pengguna telah berpindah halaman, hentikan pemrosesan batch lama seketika
           if (currentSession !== activeLoadSessionId) return;
 
           const batch = visiblePhotos.slice(i, i + batchSize);
 
-          // Muat 10 foto saat ini secara paralel (satu batch)
+          // Muat batch kecil secara paralel
           const batchPromises = batch.map((photo, batchIndex) => {
             const globalIndex = startIndex + i + batchIndex;
             return new Promise((resolve) => {
@@ -643,7 +648,6 @@
               const tempImg = new Image();
               activeImageLoaders.push(tempImg);
 
-              // Ambil URL kompresi proxy untuk cover galeri
               const compressedSrc = getCompressedUrl(photo.src);
 
               tempImg.onload = () => {
@@ -660,7 +664,7 @@
 
               tempImg.onerror = () => {
                 if (currentSession === activeLoadSessionId) {
-                  // Jika proxy gagal memuat, gunakan fallback src asli langsung
+                  // Fallback src asli jika proxy gagal
                   imgElement.src = photo.src;
                   imgElement.classList.add("loaded");
                   cardElement.classList.remove("loading-skeleton");
@@ -675,10 +679,10 @@
             });
           });
 
-          // Tunggu hingga batch selesai, tetapi batasi waktu maksimal 3,5 detik agar jika ada gambar lambat, batch selanjutnya tidak diblokir selamanya
-          await Promise.race([
+          // Jeda mikro 40ms antar batch agar browser memiliki waktu untuk melakukan garbage collection & rendering frame
+          await Promise.all([
             Promise.all(batchPromises),
-            new Promise((resolve) => setTimeout(resolve, 3500)),
+            new Promise((resolve) => setTimeout(resolve, 40)),
           ]);
         }
       }
@@ -693,6 +697,8 @@
         nextBtn.disabled = currentPage === totalPages;
 
         numContainer.innerHTML = "";
+
+        // Render semua halaman
         for (let i = 1; i <= totalPages; i++) {
           const numBtn = document.createElement("button");
           numBtn.className = `page-num ${i === currentPage ? "active" : ""}`;
@@ -713,6 +719,11 @@
 
         currentPage = pageNumber;
         renderPhotos();
+
+        // Auto scroll kembali ke atas galeri secara halus
+        document
+          .querySelector(".section-nav")
+          .scrollIntoView({ behavior: "smooth" });
       }
 
       // Navigasi via tombol Panah Kiri / Kanan
@@ -734,7 +745,6 @@
           const card = `
             <div class="gallery-card" onclick="openViewer(${index}, 'video')">
               <div class="video-thumbnail-wrapper">
-                <!-- t=1 memberitahu browser untuk menampilkan frame di detik ke-1 -->
                 <video src="${video.src}#t=1" preload="metadata" muted playsinline></video>
                 <div class="play-badge">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -791,7 +801,7 @@
         mediaBox.innerHTML = "";
       }
 
-      // Render Viewer Content
+      // Render Viewer Content - PENTING: Lightbox & Unduh menggunakan SRC asli (HD / Kualitas Penuh)
       function renderViewerContent() {
         const mediaBox = document.getElementById("viewer-media-box");
         const titleEl = document.getElementById("viewer-media-title");
@@ -802,9 +812,9 @@
         const currentItem = items[activeIndex];
 
         titleEl.textContent = currentItem.title;
-        descEl.textContent = currentItem.desc || "";
+        descEl.textContent = currentItem.desc || "Galeri Dokumentasi";
 
-        // Custom download click handler (TETAP MENGGUNAKAN GAMBAR HD/ASLI TANPA KOMPRESI)
+        // Handler Unduh Berkualitas Tinggi (Menggunakan berkas asli original, TANPA kompresi)
         downloadBtn.onclick = () => {
           const link = document.createElement("a");
           link.href = currentItem.src;
@@ -815,7 +825,7 @@
         };
 
         if (currentSection === "photo") {
-          // RENDER DENGAN GAMBAR ASLI KUALITAS TINGGI (TANPA KOMPRESI DI LIGHTBOX)
+          // Lightbox menggunakan RESOLUSI ASLI FULL HD demi kepuasan pandangan visual
           mediaBox.innerHTML = `<img src="${currentItem.src}" alt="${currentItem.title}">`;
         } else {
           // Render pemutar video kustom premium
@@ -928,7 +938,6 @@
           if (vTimelineFill) vTimelineFill.style.width = `${percentage}%`;
           if (vTimelineHandle) vTimelineHandle.style.left = `${percentage}%`;
 
-          // Update teks waktu
           if (vCurrentTime) {
             const min = Math.floor(curTime / 60);
             const sec = Math.floor(curTime % 60)
@@ -947,7 +956,6 @@
           if (vTotalTime) vTotalTime.textContent = `${min}:${sec}`;
         });
 
-        // Loop otomatis atau berlanjut
         vElement.addEventListener("ended", () => {
           vElement.currentTime = 0;
           updateVideoIcons(false);
@@ -989,7 +997,6 @@
             </svg>
           `;
         }
-        // Ambil ulang referensi agar tidak rusak
         vPlayIcon = document.getElementById("video-play-icon");
         vGiantPlayIcon = document.getElementById("giant-play-icon");
       }
