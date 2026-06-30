@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&family=Space+Grotesk:wght=400;500;600;700&display=swap"
       rel="stylesheet"
     />
     
@@ -648,10 +648,14 @@ section {
   transform: scale(1.03);
 }
 
+/* ANTI PECAH & ANTI BLUR UNTUK GAMBAR UTAMA */
 .profile-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Mencegah gambar tertekan / melar */
+  object-position: center;
+  image-rendering: -webkit-optimize-contrast; /* Penajaman gambar browser */
+  image-rendering: crisp-edges;
   transition: var(--transition-smooth);
 }
 
@@ -662,10 +666,13 @@ section {
   transition: var(--transition-smooth);
 }
 
+/* PERBAIKAN RASIO KARTU ALBUM & SERTIFIKAT */
 .media-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Melindungi rasio aspek asli agar tidak melar/gepeng */
+  object-position: center;
+  image-rendering: -webkit-optimize-contrast;
   transition: var(--transition-smooth);
 }
 
@@ -938,7 +945,7 @@ section {
   line-height: 1.6;
 }
 
-/* Base Card Grid for Desktop */
+/* Base Card Grid Desktop (Album & Sertifikat) */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1692,7 +1699,7 @@ footer {
     gap: 40px;
   }
 
-  /* Album & Certificate 3 Kolom Proporsional di Tablet */
+  /* Layout 3 Kolom pada Desktop/Tablet Sedang */
   .card-grid {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 16px;
@@ -1722,7 +1729,7 @@ footer {
   }
 }
 
-/* SANGAT UTAMA: Penyesuaian Khusus Untuk Handphone (Android, iPhone, dsb.) di bawah 768px */
+/* SANGAT UTAMA: REVOLUSI RESPONSIVE UNTUK HANDPHONE (DI BAWAH 768PX) */
 @media (max-width: 768px) {
   header {
     padding: 16px 0;
@@ -1771,7 +1778,7 @@ footer {
     font-size: 1.4rem;
   }
 
-  /* 1. PERBAIKAN: Keahlian / Kompetensi tetap 2 Grid */
+  /* Keahlian / Kompetensi tetap 2 Grid */
   .skills-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
@@ -1883,58 +1890,69 @@ footer {
     padding-right: 2px;
   }
 
-  /* 2. SOLUSI FIX: Album & Certificate tetap 3 Grid dengan visual BESAR & Judul UTUH (Tidak terpotong) */
+  /* 2. SOLUSI IMPLEMENTASI: ALBUM & SERTIFIKAT DIPAKSA 2 GRID HORIZONTAL */
   .card-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 10px !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* Paksa 2 Grid */
+    gap: 12px !important;
     align-items: stretch;
   }
 
   .media-card {
+    flex-direction: column !important; /* Kartu tetap vertikal agar proporsi muat dalam 2 grid sempit */
     border-radius: 12px;
     height: 100%;
     display: flex;
-    flex-direction: column;
   }
 
   .media-cover {
-    height: 120px; /* Ukuran visual cover diperbesar agar terlihat mantap dan dominan */
+    width: 100% !important;
+    height: 110px !important; /* Mengurangi tinggi cover di mobile agar info muat */
+    border-right: none;
+  }
+
+  .media-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover !important; /* Resolusi aman tanpa distorsi */
   }
 
   .media-info {
-    padding: 12px 10px;
+    padding: 12px;
     gap: 6px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
   }
 
   .media-date {
     font-size: 0.7rem;
   }
 
+  /* JUDUL DIJAMIN TERBACA PENUH (TIDAK TERPOTONG/CLAMPED) */
   .media-title {
-    font-size: 0.82rem; /* Ukuran font judul proporsional namun jelas */
-    line-height: 1.3;
-    display: block !important; /* Hapus format Webkit Box Clamp agar teks terurai utuh */
+    font-size: 0.85rem !important;
+    line-height: 1.4;
+    color: var(--text-primary);
+    display: block !important;
+    white-space: normal !important;
     overflow: visible !important;
     text-overflow: clip !important;
     -webkit-line-clamp: none !important;
-    white-space: normal !important;
-    word-break: break-word; /* Mengatasi kata panjang agar melipat ke bawah secara estetik */
+    -webkit-box-orient: unset !important;
+    word-break: break-word !important; /* Melipat kata panjang agar estetik */
     margin-bottom: 8px;
   }
 
   .media-action {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     gap: 4px;
     margin-top: auto;
   }
 
   .media-action svg {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
   }
 
   /* Floating Mini Player Mobile */
@@ -2016,22 +2034,31 @@ footer {
 
 /* Penyesuaian Layar Sangat Sempit (misal iPhone SE / di bawah 480px) */
 @media (max-width: 480px) {
+  /* Di layar super kecil, kita gunakan flex-row panjang ke samping agar space tidak sempit */
   .card-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 8px !important;
+    grid-template-columns: 1fr !important; /* Ubah menjadi 1 kolom yang panjang ke samping untuk mengoptimalkan bacaan */
+    gap: 12px !important;
   }
 
   .media-card {
-    border-radius: 10px;
+    flex-direction: row !important; /* Paksa memanjang ke samping (Horizontal) */
+    align-items: center;
+    border-radius: 12px;
+    padding: 8px;
+    gap: 12px;
   }
 
   .media-cover {
-    height: 100px; /* Dipertahankan tetap tinggi (100px) agar visual kartu besar & gagah */
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 8px;
+    flex-shrink: 0;
   }
 
   .media-info {
-    padding: 8px 6px;
+    padding: 0;
     gap: 4px;
+    width: 100%;
   }
 
   .media-date {
@@ -2039,18 +2066,18 @@ footer {
   }
 
   .media-title {
-    font-size: 0.75rem; /* Judul tetap utuh dan terbaca tanpa terpotong */
-    line-height: 1.25;
+    font-size: 0.8rem !important;
+    line-height: 1.3;
+    margin-bottom: 4px;
     display: block !important;
+    white-space: normal !important;
     overflow: visible !important;
     text-overflow: clip !important;
-    -webkit-line-clamp: none !important;
-    white-space: normal !important;
-    word-break: break-word;
+    word-break: break-word !important;
   }
 
   .media-action {
-    font-size: 0.62rem;
+    font-size: 0.7rem;
     gap: 2px;
   }
 
@@ -2745,7 +2772,6 @@ footer {
                   <span class="media-date">April - Mei 2026</span>
                   <h3 class="media-title">
                     Dokumentasi Panitia Pentas Seni "Reminiscing Diversity"
-                    Angkatan 30 SMP Negeri 11 Kota Tangerang Selatan.
                   </h3>
                   <div class="media-action">
                     <span>Lihat Album</span>
@@ -2840,7 +2866,7 @@ footer {
                 <div class="media-info">
                   <span class="media-date">19 - 20 Mei 2026</span>
                   <h3 class="media-title">
-                    Reminiscing Diversity — Special Moments
+                    Reminiscing Diversity — Special
                   </h3>
                   <div class="media-action">
                     <span>Lihat Album</span>
@@ -2871,7 +2897,7 @@ footer {
                   />
                 </div>
                 <div class="media-info">
-                  <span class="media-date"></span>
+                  <span class="media-date">2026</span>
                   <h3 class="media-title">Selas Random Moments</h3>
                   <div class="media-action">
                     <span>Lihat Album</span>
