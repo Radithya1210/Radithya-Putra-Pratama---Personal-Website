@@ -257,7 +257,7 @@ body {
     background-color 0.5s ease,
     color 0.5s ease;
   position: relative;
-  padding-bottom: 160px; /* Tambahan sedikit padding bawah untuk space floating player */
+  padding-bottom: 160px;
 }
 
 h1,
@@ -497,30 +497,14 @@ section {
   color: var(--text-primary);
 }
 
-#home {
-  background: var(--bg-home);
-}
-#about {
-  background: var(--bg-about);
-}
-#skills {
-  background: var(--bg-skills);
-}
-#education {
-  background: var(--bg-education);
-}
-#albums {
-  background: var(--bg-albums);
-}
-#playlist {
-  background: var(--bg-playlist);
-}
-#certificates {
-  background: var(--bg-certificates);
-}
-#contact {
-  background: var(--bg-contact);
-}
+#home { background: var(--bg-home); }
+#about { background: var(--bg-about); }
+#skills { background: var(--bg-skills); }
+#education { background: var(--bg-education); }
+#albums { background: var(--bg-albums); }
+#playlist { background: var(--bg-playlist); }
+#certificates { background: var(--bg-certificates); }
+#contact { background: var(--bg-contact); }
 
 #home {
   min-height: 100vh;
@@ -730,9 +714,6 @@ section {
   margin-bottom: 30px;
 }
 
-/* Default grid: 2 Kolom untuk Desktop/Tablet.
-        Nanti di bagian media query, kita paksa tetap 2 kolom pada ponsel.
-      */
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -793,7 +774,7 @@ section {
 }
 
 .skill-info {
-  min-width: 0; /* Mencegah overflow flex item */
+  min-width: 0;
 }
 
 .skill-info h3 {
@@ -957,6 +938,7 @@ section {
   line-height: 1.6;
 }
 
+/* Base Card Grid for Desktop */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1037,7 +1019,7 @@ section {
   -webkit-backdrop-filter: var(--glass-blur);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   color: #e5e7eb;
-  overflow: hidden; /* Tambahan agar tidak ada kebocoran layout */
+  overflow: hidden;
 }
 
 [data-theme="light"] .spotify-container {
@@ -1090,7 +1072,7 @@ section {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-width: 0; /* Sangat krusial agar text-overflow bekerja */
+  min-width: 0;
 }
 
 .playlist-type {
@@ -1127,9 +1109,6 @@ section {
   width: 100%;
 }
 
-/* Meningkatkan presisi grid layout agar responsif dan tidak offside.
-        Menggunakan grid template yang stabil: minmax untuk judul agar mengecil jika dibutuhkan.
-      */
 .track-header {
   display: grid;
   grid-template-columns: 40px 1fr 80px;
@@ -1209,7 +1188,7 @@ section {
   display: flex;
   align-items: center;
   gap: 16px;
-  min-width: 0; /* Penting untuk pemotongan teks */
+  min-width: 0;
 }
 
 .track-img-wrap {
@@ -1242,7 +1221,7 @@ section {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 0; /* Penting untuk pemotongan teks */
+  min-width: 0;
 }
 
 .track-title-text {
@@ -1298,8 +1277,6 @@ section {
   pointer-events: auto;
 }
 
-/* Grid 3 kolom bawaan desktop: Info Lagu (1fr) | Slider & Kontrol (2fr) | Volume (1fr)
-      */
 .player-bar {
   background: rgba(15, 23, 42, 0.85);
   border: 1px solid var(--border-color);
@@ -1658,7 +1635,7 @@ footer {
 
 #scroll-to-top {
   position: fixed;
-  bottom: 110px; /* Diatur agar tidak bertabrakan dengan floating player */
+  bottom: 110px;
   right: 30px;
   width: 46px;
   height: 46px;
@@ -1688,8 +1665,8 @@ footer {
 }
 
 /* ==========================================================================
-         MEDIA QUERIES (RESPONSIVENESS & CORRECTIONS)
-         ========================================================================== */
+   MEDIA QUERIES (RESPONSIVENESS, COHESIVENESS & CORRECTIONS)
+   ========================================================================== */
 @media (max-width: 1024px) {
   #home {
     padding-top: 120px;
@@ -1715,7 +1692,7 @@ footer {
     gap: 40px;
   }
 
-  /* Album & Certificate tetap 3 kolom yang proporsional di tablet */
+  /* Album & Certificate 3 Kolom Proporsional di Tablet */
   .card-grid {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 16px;
@@ -1727,18 +1704,17 @@ footer {
 
   .media-info {
     padding: 16px;
-    gap: 6px;
+    gap: 8px;
   }
 
   .media-title {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
   .contact-wrapper {
     grid-template-columns: 1fr;
   }
 
-  /* Player Bar untuk layar tablet sedang */
   .player-bar {
     grid-template-columns: 1.2fr 2fr 0.8fr;
     gap: 16px;
@@ -1746,9 +1722,7 @@ footer {
   }
 }
 
-/* SANGAT UTAMA: Penyesuaian khusus untuk Handphone (Android, iPhone, dsb.)
-        lebar layar di bawah 768px.
-      */
+/* SANGAT UTAMA: Penyesuaian Khusus Untuk Handphone (Android, iPhone, dsb.) di bawah 768px */
 @media (max-width: 768px) {
   header {
     padding: 16px 0;
@@ -1797,8 +1771,7 @@ footer {
     font-size: 1.4rem;
   }
 
-  /* 1. PERBAIKAN: Memaksa Keahlian / Kompetensi tetap 2 Grid di Android & iPhone 
-        */
+  /* 1. PERBAIKAN: Keahlian / Kompetensi tetap 2 Grid */
   .skills-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
@@ -1847,8 +1820,7 @@ footer {
     font-size: 0.75rem;
   }
 
-  /* 2. PERBAIKAN: Playlist Favorit Responsif & Tidak Offside 
-        */
+  /* Playlist Favorit Responsif */
   .spotify-header {
     flex-direction: row;
     align-items: center;
@@ -1877,7 +1849,6 @@ footer {
     gap: 4px;
   }
 
-  /* Mematangkan grid list lagu agar kolom durasi tidak keluar layar (offside) */
   .track-header {
     grid-template-columns: 30px 1fr 60px;
     padding: 8px 10px;
@@ -1912,59 +1883,68 @@ footer {
     padding-right: 2px;
   }
 
-  /* Album & Certificate 3 Grid di Handphone (Sesuai kode bawaan Anda) */
+  /* 2. SOLUSI FIX: Album & Certificate tetap 3 Grid dengan visual BESAR & Judul UTUH (Tidak terpotong) */
   .card-grid {
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 8px;
+    gap: 10px !important;
+    align-items: stretch;
   }
 
   .media-card {
-    border-radius: 10px;
+    border-radius: 12px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .media-cover {
-    height: 95px;
+    height: 120px; /* Ukuran visual cover diperbesar agar terlihat mantap dan dominan */
   }
 
   .media-info {
-    padding: 10px;
-    gap: 4px;
+    padding: 12px 10px;
+    gap: 6px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .media-date {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
   }
 
   .media-title {
-    font-size: 0.75rem;
-    line-height: 1.2;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.82rem; /* Ukuran font judul proporsional namun jelas */
+    line-height: 1.3;
+    display: block !important; /* Hapus format Webkit Box Clamp agar teks terurai utuh */
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: none !important;
+    white-space: normal !important;
+    word-break: break-word; /* Mengatasi kata panjang agar melipat ke bawah secara estetik */
+    margin-bottom: 8px;
   }
 
   .media-action {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     gap: 4px;
+    margin-top: auto;
   }
 
   .media-action svg {
-    width: 10px;
-    height: 10px;
+    width: 11px;
+    height: 11px;
   }
 
-  /* 3. PERBAIKAN: Floating Mini Player - Menampilkan Volume Slider di Mobile 
-          Kita tata ulang player menjadi 2 baris atau grid kompak agar slider volume muat dengan cantik.
-        */
+  /* Floating Mini Player Mobile */
   .floating-player-wrapper {
     bottom: 12px;
     width: calc(100% - 16px);
   }
 
   .player-bar {
-    grid-template-columns: 1fr 1fr; /* Membagi grid menjadi 2 kolom yang presisi */
+    grid-template-columns: 1fr 1fr;
     row-gap: 12px;
     column-gap: 8px;
     padding: 12px 16px;
@@ -1991,19 +1971,17 @@ footer {
     max-width: 110px;
   }
 
-  /* Penyeimbang volume diletakkan sejajar di kanan atas */
   .player-right {
     grid-column: span 1;
-    display: flex !important; /* Memaksa volume slider tampil */
+    display: flex !important;
     justify-content: flex-end;
     gap: 6px;
   }
 
   .volume-container {
-    width: 50px; /* Ukuran slider volume mobile yang lebih ringkas */
+    width: 50px;
   }
 
-  /* Kontrol & timeline ditaruh penuh di baris kedua */
   .player-center {
     grid-column: span 2;
     width: 100%;
@@ -2036,37 +2014,43 @@ footer {
   }
 }
 
-/* Penyesuaian Sangat Sempit (misal iPhone SE / 480px kebawah) */
+/* Penyesuaian Layar Sangat Sempit (misal iPhone SE / di bawah 480px) */
 @media (max-width: 480px) {
   .card-grid {
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 6px;
+    gap: 8px !important;
+  }
+
+  .media-card {
+    border-radius: 10px;
   }
 
   .media-cover {
-    height: 75px;
+    height: 100px; /* Dipertahankan tetap tinggi (100px) agar visual kartu besar & gagah */
   }
 
   .media-info {
-    padding: 6px;
-    gap: 3px;
+    padding: 8px 6px;
+    gap: 4px;
   }
 
   .media-date {
-    font-size: 0.55rem;
+    font-size: 0.65rem;
   }
 
   .media-title {
-    font-size: 0.65rem;
-    line-height: 1.1;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-size: 0.75rem; /* Judul tetap utuh dan terbaca tanpa terpotong */
+    line-height: 1.25;
+    display: block !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: none !important;
+    white-space: normal !important;
+    word-break: break-word;
   }
 
   .media-action {
-    font-size: 0.55rem;
+    font-size: 0.62rem;
     gap: 2px;
   }
 
@@ -2090,7 +2074,6 @@ footer {
     top: 8px;
   }
 
-  /* Tetap paksa 2 kolom untuk keahlian */
   .skills-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 8px !important;
@@ -2108,7 +2091,6 @@ footer {
     font-size: 0.7rem;
   }
 
-  /* Floating player diperhalus lagi untuk layar terkecil */
   .player-song-title {
     max-width: 90px;
   }
@@ -2119,7 +2101,6 @@ footer {
     width: 40px;
   }
 }
-
 </style>
 
       </head>
@@ -2945,7 +2926,6 @@ footer {
                       >• 0 min</span
                     >
                   </div>
-                  <!-- Replaced native box with beautiful minimalist status tag -->
                   <p
                     id="now-playing-title-label"
                     style="
@@ -3270,7 +3250,7 @@ footer {
           Browser Anda tidak mendukung audio.
         </audio>
 
-        <!-- Floating Mini Player Bar: Terkoneksi ke tag audio asli -->
+        <!-- Floating Mini Player Bar -->
         <div class="floating-player-wrapper" id="floating-music-player">
           <div class="player-bar">
             <div class="player-left">
@@ -3425,9 +3405,8 @@ footer {
         <script>
           let currentTrackIndex = 0;
           let isPlaying = false;
-          let playerActivated = false; // Bar mengambang aktif setelah pemutaran lagu pertama
+          let playerActivated = false;
 
-          // Konfigurasi menggunakan file audio MP3 eksternal / lokal di folder asset/audio
           const tracks = [
             {
               url: "./asset/music/Shape Of My Heart.mp3",
@@ -3527,14 +3506,13 @@ footer {
             },
           ];
 
-          // Elemen-Elemen Audio HTML5 Asli
           let nativePlayer;
           let audioSourceEl;
 
           function renderTracklistUI() {
             const tracklistContainer =
               document.getElementById("dynamic-tracklist");
-            tracklistContainer.innerHTML = ""; // Bersihkan kontainer
+            tracklistContainer.innerHTML = "";
 
             tracks.forEach((track, index) => {
               const rowHTML = `
@@ -3568,7 +3546,6 @@ footer {
 
             const activeTrack = tracks[currentTrackIndex];
             if (activeTrack) {
-              // Update Label Playlist (Safe check to prevent errors)
               const playlistLabel = document.getElementById(
                 "now-playing-title-label",
               );
@@ -3576,14 +3553,10 @@ footer {
                 playlistLabel.textContent = `Sedang Diputar: ${activeTrack.title} — ${activeTrack.artist}`;
               }
 
-              // Update Mini Player Floating
-              document.getElementById("p-title").textContent =
-                activeTrack.title;
-              document.getElementById("p-artist").textContent =
-                activeTrack.artist;
+              document.getElementById("p-title").textContent = activeTrack.title;
+              document.getElementById("p-artist").textContent = activeTrack.artist;
               document.getElementById("p-img").src = activeTrack.cover;
-              document.getElementById("total-time-text").textContent =
-                activeTrack.durationStr;
+              document.getElementById("total-time-text").textContent = activeTrack.durationStr;
             }
           }
 
@@ -3630,7 +3603,6 @@ footer {
               nativePlayer.pause();
               isPlaying = false;
             } else {
-              // Pastikan ada file lagu yang terpasang
               if (!nativePlayer.src || nativePlayer.src.includes("undefined")) {
                 nativePlayer.src = tracks[currentTrackIndex].url;
                 nativePlayer.load();
@@ -3667,7 +3639,6 @@ footer {
             }
           }
 
-          // Tambahkan fungsi ini
           function updatePlaylistTotalDuration() {
             const totalSeconds = tracks.reduce(
               (acc, track) => acc + (track.durationSec || 0),
@@ -3734,15 +3705,12 @@ footer {
           }
 
           document.addEventListener("DOMContentLoaded", () => {
-            // Hubungkan Ke Elemen HTML5 Audio
             nativePlayer = document.getElementById("main-audio");
             audioSourceEl = document.getElementById("audio-source");
 
-            // Set default volume
             nativePlayer.volume = 0.8;
             document.getElementById("volume-filled-bar").style.width = "80%";
 
-            // Sinkronisasi Event HTML5 Audio asli dengan Player Kustom / Floating Bar
             nativePlayer.addEventListener("timeupdate", () => {
               updateTimelineProgressUI();
             });
@@ -3771,7 +3739,6 @@ footer {
               document.getElementById("total-time-text").textContent =
                 `${mins}:${secs}`;
 
-              // Update data durasi di array lokal secara asinkron jika diperlukan
               tracks[currentTrackIndex].durationSec = Math.floor(duration);
               tracks[currentTrackIndex].durationStr = `${mins}:${secs}`;
 
@@ -3783,12 +3750,11 @@ footer {
               }
             });
 
-            // Inisialisasi Visual Playlist
             renderTracklistUI();
             updateTracklistActiveState();
             updatePlaylistTotalDuration();
 
-            // --- THEME SWITCHER LOGIC ---
+            // --- Theme Switcher Mode Logic ---
             const themeBtns = document.querySelectorAll(".theme-btn");
 
             function setTheme(themeName) {
@@ -3819,7 +3785,7 @@ footer {
               });
             });
 
-            // --- DYNAMIC METADATA & CALCULATIONS ---
+            // --- Dynamic Calculations ---
             function calculateAge() {
               const birthDate = new Date(2010, 10, 12);
               const today = new Date();
@@ -3837,7 +3803,6 @@ footer {
             }
             calculateAge();
 
-            // Dynamic SMK 6 status check
             function checkEducationStatus() {
               const currentDate = new Date();
               const targetDate = new Date(2029, 6, 1);
@@ -3865,7 +3830,7 @@ footer {
             document.getElementById("footer-year").textContent =
               new Date().getFullYear();
 
-            // --- MOUSE FOLLOW EFFECT ---
+            // --- Mouse follow radial effect ---
             const glowOrb = document.getElementById("mouse-glow");
             document.addEventListener("mousemove", (e) => {
               glowOrb.style.opacity = "1";
@@ -3876,7 +3841,7 @@ footer {
               glowOrb.style.opacity = "0";
             });
 
-            // Header shrinking scroll interactions
+            // --- Scroll interaction details ---
             const header = document.getElementById("main-header");
             const sections = document.querySelectorAll("section");
             const navLinks = document.querySelectorAll(".nav-link");
@@ -3931,7 +3896,7 @@ footer {
               });
             });
 
-            // --- RESPONSIVE HAMBURGER MENU ---
+            // --- Navigation drawer menu toggle ---
             const menuToggle = document.getElementById("menu-toggle");
             const navMenu = document.getElementById("nav-menu");
 
@@ -3947,7 +3912,7 @@ footer {
               });
             });
 
-            // Typing effect configuration
+            // --- Auto typing writer ---
             const textToType = [
               "Web Developer & Game Designer.",
               "Inovasi Tanpa Batas.",
@@ -3986,7 +3951,7 @@ footer {
             }
             typeWriter();
 
-            // --- REVEAL ELEMENTS ON SCROLL ---
+            // --- Scroll view reveal effects ---
             const revealElements = document.querySelectorAll(
               ".reveal, .timeline-item, .section-header",
             );
@@ -4018,7 +3983,7 @@ footer {
             });
           });
 
-          // --- CONTACT FORM SUBMISSION ---
+          // --- Contact form validation submission ---
           function handleFormSubmit(event) {
             event.preventDefault();
 
@@ -4062,7 +4027,6 @@ footer {
             }, 4000);
           }
 
-          // --- SCROLL TO TOP ---
           function scrollToTop() {
             window.scrollTo({
               top: 0,
